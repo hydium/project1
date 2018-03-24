@@ -116,7 +116,7 @@ sema_up (struct semaphore *sema)
   if (!list_empty (&sema->waiters)) 
     // thread_unblock (list_entry (list_pop_front (&sema->waiters),
     //                             struct thread, elem));
-    
+
     /* In the list of threads waiting for a particular semaphore, 
        unblock the one with the highest priority */
     {
@@ -135,11 +135,6 @@ sema_up (struct semaphore *sema)
             }
         }
       list_remove(&thread_with_highest_priority->elem);
-
-      for (e = list_begin (&sema->waiters); e != list_end (&sema->waiters); e = list_next (e))
-        {
-          struct thread *f = list_entry (e, struct thread, elem);
-        }
       sema->value++;
       thread_unblock(thread_with_highest_priority);
     }
