@@ -8,6 +8,7 @@
 #include "threads/interrupt.h"
 #include "threads/intr-stubs.h"
 #include "threads/palloc.h"
+#include "threads/malloc.h"
 #include "threads/switch.h"
 #include "threads/synch.h"
 #include "threads/vaddr.h"
@@ -581,10 +582,18 @@ init_thread (struct thread *t, const char *name, int priority)
   ASSERT (name != NULL);
 
   memset (t, 0, sizeof *t);
+
+  list_init(&t->list_of_held_locks);
+
   t->status = THREAD_BLOCKED;
   strlcpy (t->name, name, sizeof t->name);
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
+  t->original_priority = priority;
+  t->waited_lock = NULL;
+
+  // list_init(&t->list_of_held_locks);
+
   t->magic = THREAD_MAGIC;
   list_push_back (&all_list, &t->allelem);
 }
@@ -638,7 +647,7 @@ next_thread_to_run (void)
 
     /* Since our implementation of adding elements to the ready list keeps 
     elements with the highest priority first, we just pop the front element
-    in this function. */
+    in this function */
 
     return list_entry (list_pop_front (&ready_list), struct thread, elem);
   // }

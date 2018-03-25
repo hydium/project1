@@ -835,3 +835,224 @@ cd threads
 pintos --gdb -- run priority-sema
 cd pintos/src/threads/build
 pintos-gdb kernel.o
+ls
+cd pintos
+cd src
+cd threads
+make cleab
+make clean
+mak
+make
+make check
+pintos run priority-sema
+make clean
+nake
+make
+pintos run priority-sema
+make clean
+make
+pintos run priority-sema
+make clean
+make
+pintos run priority-sema
+make clean
+make
+pintos run priority-sema
+make checl
+make check
+pintos run alarm-single
+make clean
+make
+pintos run alarm-sing
+make check
+make clean
+make
+pintos run priority-sema
+make
+make clean
+make
+pintos run priority-sema
+make clean
+make
+pintos run priority-sema
+make clean
+make
+pintos run priority-sema
+make clean
+make
+pintos run priority-sema
+make clean
+make
+pintos run priority-sema
+make clean
+make
+pintos run priority-sema
+make clean
+make
+pintos run priority-sema
+make clean
+make
+pintos run priority-sema
+make clean
+make
+pintos run priority-sema
+make check
+pintos run priority-sema
+make clean
+make check
+pintos run priority-sema
+make clean
+make
+make check
+cd ..
+git add .
+git commit -m "priority-sema done"
+git config user.name "mikolez@gmail.com"
+git push origin master
+ls -a
+git push origin master
+git remote 
+git remote origin
+git remote origin https://github.com/hydium/project1
+git remote origin "https://github.com/hydium/project1"
+git remote origin
+git remote add https://github.com/hydium/project1
+git remote add origin https://github.com/hydium/project1
+git remove remote
+git push -u origin master
+git show-ref
+rm -rf git
+git init
+git add .
+git remote add origin 'https://github.com/hydium/project1'
+git remote set-url origin 'https://github.com/hydium/project1'
+git commit -m "priority-sema done"
+git config user.email "mikolez@gmail.com"
+git commit -m "priority-sema done"
+git push origin master
+git remote set-url origin https://github.com/hydium/project1
+git config user.email "mikolez@gmail.com"
+git commit -m "priority-sema done"
+git push origin master
+git remote -v
+git push origin master
+git push -f origin master
+cd pintos/src/threads
+ls
+make check
+make clean
+make
+make check
+make clean
+make check
+make clean
+make check
+make clean
+make
+make check
+make clean
+make check
+make clean
+make
+make check
+pintos run priority-preempt
+make check
+make clean
+make
+make check
+make clean
+make
+make check
+cd ..
+git add .
+git commit -m "priority-fifo and alarm-simultaneous done"
+git push origin master
+cd pintos/src.threads
+cd pintos/src/threads
+make clean
+make check
+make clean
+make
+make check
+cd ..
+git add .
+git commit -m "Some redundant code is removed"
+git push origin master
+cd pintos/src/threads
+pintos run priority-donate-one
+make check
+make clean
+make check
+ls
+cd pintos/src/threads
+make clean
+make
+make clean
+make
+make clean
+make
+make celna
+make clean
+make
+make check
+make 
+make clean
+make
+make clean
+make
+make clean
+make
+make check
+make clean
+make
+make check
+make clean
+make
+make check
+pintos run alarm-single
+make clean
+make
+make check
+make clean
+make
+make clean
+make
+make clean
+make
+../../threads/thread.c:592: error: incompatible types in assignment
+make clean
+make
+../../threads/synch.c:321: error: incompatible type for argument 1 of ‘list_end’
+make clean
+make
+make check
+make clean
+make
+make check
+make clean
+make
+make check
+make clean
+make check
+cd pintos/src/threasd
+cd pintos/src/threads
+make clean
+make
+make chcek
+make check
+pintos run alarm-single
+make clean
+make
+pintos run alarm-single
+make clean
+make check
+make clean
+make check
+make cleab
+make clean
+make
+make check
+pintos --gdb -- run
+pintos --gdb -- run alarm-single
+pintos --gdb -- run
+cd pintos/src/threads/build

@@ -93,6 +93,15 @@ struct thread
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
 
+    int original_priority;              /* Original priority (used to store the original priority in presence of donation) */
+
+    struct lock *waited_lock;           /* Lock which the given thread waits for */
+
+    struct list list_of_held_locks;    /* List of locks which the given thread holds */
+
+    //char text[512];
+
+
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
     uint32_t *pagedir;                  /* Page directory. */

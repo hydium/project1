@@ -219,7 +219,7 @@ lock_acquire (struct lock *lock)
   ASSERT (!intr_context ());
   ASSERT (!lock_held_by_current_thread (lock));
 
-  sema_down (&lock->semaphore);
+  lock_down (lock);
   lock->holder = thread_current ();
 }
 
@@ -255,7 +255,7 @@ lock_release (struct lock *lock)
   ASSERT (lock_held_by_current_thread (lock));
 
   lock->holder = NULL;
-  sema_up (&lock->semaphore);
+  lock_up (lock);
 }
 
 /* Returns true if the current thread holds LOCK, false
@@ -268,6 +268,125 @@ lock_held_by_current_thread (const struct lock *lock)
 
   return lock->holder == thread_current ();
 }
+
+void
+lock_down (struct lock *lock) 
+{
+  enum intr_level old_level;
+
+  ASSERT (lock != NULL);
+  ASSERT (!intr_context ());
+
+  old_level = intr_disable ();
+
+  struct semaphore *sema = &lock->semaphore;
+  int running_thread_priority = running_thread()->priority;
+
+  while (sema->value == 0) 
+    {
+      running_thread()->waited_lock = lock;
+
+      list_push_back (&sema->waiters, &thread_current ()->elem);
+      struct thread *lock_owner = lock->holder;
+
+      propagate_priority(lock_owner, running_thread_priority, lock);
+
+      thread_block ();
+    }
+
+  struct held_lock_wrapper held_lock;
+  held_lock.lock = lock;
+  held_lock.priority = running_thread_priority;
+  list_push_back(&running_thread()->list_of_held_locks, &held_lock); 
+
+  sema->value--;
+  intr_set_level (old_level);
+}
+
+void
+lock_up (struct lock *lock) 
+{
+  enum intr_level old_level;
+
+  ASSERT (lock != NULL);
+
+  old_level = intr_disable ();
+
+  struct semaphore *sema = &lock->semaphore;
+  struct thread *lock_owner = running_thread();
+  int resulting_thread_priority = lock_owner->original_priority;
+
+  struct list_elem *e;
+
+  for (e = list_begin (&lock_owner->list_of_held_locks); e != list_end (&lock_owner->list_of_held_locks); e = list_next (e))
+    {
+      struct held_lock_wrapper *f = list_entry (e, struct held_lock_wrapper, elem);
+      if (f->lock == lock) 
+          list_remove(e);
+      else if (f->priority > resulting_thread_priority) 
+          resulting_thread_priority = f->priority;
+    }
+
+  lock_owner->priority = resulting_thread_priority;
+
+  if (!list_empty (&sema->waiters)) 
+    // thread_unblock (list_entry (list_pop_front (&sema->waiters),
+    //                             struct thread, elem));
+
+    /* In the list of threads waiting for a particular semaphore, 
+       unblock the one with the highest priority */
+    {
+      struct thread *thread_with_highest_priority;
+      int highest_priority = PRI_MIN;
+      struct list_elem *e;
+    
+      for (e = list_begin (&sema->waiters); e != list_end (&sema->waiters); e = list_next (e))
+        {
+          struct thread *f = list_entry (e, struct thread, elem);
+          int thread_priority = f->priority;
+          if (highest_priority <= thread_priority) 
+            {
+              thread_with_highest_priority = f;
+              highest_priority = thread_priority;
+            }
+        }
+
+      list_remove(&thread_with_highest_priority->elem);
+      thread_with_highest_priority->waited_lock = NULL;
+      sema->value++;
+      thread_unblock(thread_with_highest_priority);
+    }
+  else
+    sema->value++;
+  intr_set_level (old_level);
+}
+
+void 
+propagate_priority (struct thread *lock_owner, int priority_to_propagate, struct lock *lock) 
+{
+  struct list_elem *e;
+
+  for (e = list_begin (&lock_owner->list_of_held_locks); e != list_end (&lock_owner->list_of_held_locks); e = list_next (e))
+    {
+      struct held_lock_wrapper *f = list_entry (e, struct held_lock_wrapper, elem);
+      if (f->lock == lock) 
+        {
+          if (f->priority < priority_to_propagate) 
+            {
+              f->priority = priority_to_propagate;
+              if (priority_to_propagate > lock_owner->priority) 
+                {
+                  lock_owner->priority = priority_to_propagate;
+
+                  if (lock_owner->waited_lock != NULL) 
+                    propagate_priority(lock_owner->waited_lock->holder, priority_to_propagate, lock_owner->waited_lock);
+                }
+            }
+        }
+    }
+}
+
+
 
 /* One semaphore in a list. */
 struct semaphore_elem 
